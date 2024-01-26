@@ -1,4 +1,4 @@
-# ExpO Framework
+# ExpO: Towards Explaining Ontology-Driven Conceptual Models
 
 ## Expo Web Application
 
@@ -20,26 +20,26 @@ If you are interested to know more, feel free to open an issue to provide feedba
 ___
 ## Functionality
 
-To __load__ the model you can either provide a JSON file with the model, or specify a url address (models can be found in [OntoUML/UFO Catalog](https://github.com/OntoUML/ontouml-models).
+To __load__ the model you can either provide a JSON file with the model or specify a URL address (models can be found in [OntoUML/UFO Catalog](https://github.com/OntoUML/ontouml-models).
 In case you are specifying a URL, please, make sure to use a link to a _raw_ view.
 
 <img src="https://github.com/mozzherina/ExpO/assets/39998083/edeb6c4e-6b96-42b6-943c-bfb9d0a16538"  width="600">
 
-When the graph appears, you can view or scale it, place it in the better possition using drag-and-drop. 
+When the graph appears, you can view or scale it, place it in a better position using drag-and-drop. 
 The layout of the model is kept according to the original diagram from the [Visual Paradigm](https://www.visual-paradigm.com/). 
 Objects (and their hierarchies) are coloured in _red_. Modes are coloured in _blue_. Relators are given in _green diamonds_. Events are specified as _yellow stars_. 
 Enumerations (if there are any) are pure _white_. 
 
 ![Model](https://github.com/mozzherina/ExpO/assets/39998083/48f89528-0d43-40eb-bada-a6104310825f)
 
-By clicking on the left menu button you can view the concepts and relations, that are currently specified in the graph. You can filter them or reoder.
+By clicking on the left menu button you can view the concepts and relations, that are currently specified in the graph. You can filter them or reorder.
 By clicking on the right menu button you can review constraints that are applied to the model.
 
 <img src="https://github.com/mozzherina/ExpO/assets/39998083/74d1c945-5739-4078-8e28-064447ad4e17"  width="900">
 
-You can apply all the transformation opertaions that are described for the API [here](https://github.com/mozzherina/expose). 
+You can apply all the transformation operations that are described for the API [here](https://github.com/mozzherina/expose). 
 To run the operation right click on the node of interest and select a corresponding function from the context menu.
-The results appears as soon as they are recieved from the server. Please, keep in mind that __expand__ operation may take up to several seconds.
+The results appear as soon as they are received from the server. Please, keep in mind that __expand__ operation may take up to several seconds.
 
 ![Context_menu](https://github.com/mozzherina/ExpO/assets/39998083/fb4b388b-2397-48ee-85a2-b711635328eb)
 
@@ -74,5 +74,4 @@ ___
 Please, refer to the [PURL](https://w3id.org/ExpO) and
 cite the paper: 
 
-Romanenko, E., Calvanese, D., Guizzardi, G.: ExpO: A Framework for Explaining
-Ontology-Driven Conceptual Models. (2023) _Manuscript submitted for publication._
+Romanenko, E., Calvanese, D., Guizzardi, G.: ExpO: An Approach Towards Explaining Ontology-Driven Conceptual Models. (2024) _Manuscript submitted for publication._
