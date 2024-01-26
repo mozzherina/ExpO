@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   Modal,
   Button,
@@ -11,19 +11,20 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { load } from '../store/data/data.actions';
 import { selectIsDataModalOpen } from '../store/menu/menu.selectors';
-import { toggleDataModal } from '../store/menu/menu.actions';
+import { setDataModal } from '../store/menu/menu.actions';
 
 export default function LoadDataModal() {
   const [file, setFile] = useState(null);
   const [mode, setMode] = useState('url'); // or 'file'
   const [url, setUrl] = useState(
-    'https://raw.githubusercontent.com/OntoUML/ontouml-models/master/models/abrahao2018agriculture-operations/ontology.json'
+    ''
+    // 'https://raw.githubusercontent.com/OntoUML/ontouml-models/master/models/abrahao2018agriculture-operations/ontology.json'
   );
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
   const show = useSelector(selectIsDataModalOpen);
-  const onClose = () => dispatch(toggleDataModal());
+  const onClose = useCallback(() => dispatch(setDataModal(false)), [dispatch]);
 
   const onChangeUrl = (event) => {
     const { value } = event.target;
@@ -73,7 +74,6 @@ export default function LoadDataModal() {
           <div className='flex items-center gap-2 mb-2'>
             <Radio
               name='mode-url'
-              value='USA'
               checked={mode === 'url'}
               onChange={() => setMode('url')}
             />
@@ -82,8 +82,8 @@ export default function LoadDataModal() {
           <TextInput
             id='urlData'
             placeholder='Paste the link to the json file here'
-            value={url}
-            onChange={onChangeUrl}
+            // value={url}
+            onBlur={onChangeUrl}
             disabled={mode !== 'url'}
           />
         </div>

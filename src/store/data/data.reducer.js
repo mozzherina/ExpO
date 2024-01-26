@@ -1,10 +1,13 @@
 import { genId } from '../../utils';
 import dataTypes from './data.types';
+import { cloneDeep } from 'lodash';
 
 const initialState = {
   loading: false,
   graph: null,
   constraints: [],
+  clickedNode: null,
+  abstractCount: 0,
   origin: null,
   pinnedNodes: null,
   activeNodes: null,
@@ -12,7 +15,7 @@ const initialState = {
   error: null,
 };
 
-const dataReducer = (state = initialState, { type, payload }) => {
+const dataReducer = (state = cloneDeep(initialState), { type, payload }) => {
   switch (type) {
     case dataTypes.REQUEST_LOAD:
     case dataTypes.REQUEST_FOCUS:
@@ -55,6 +58,11 @@ const dataReducer = (state = initialState, { type, payload }) => {
         error: payload,
         loading: false,
       };
+    case dataTypes.SET_ABSTRACT_COUNT:
+      return {
+        ...state,
+        abstractCount: payload,
+      };
     case dataTypes.REQUEST_DEFINE:
       return {
         ...state,
@@ -85,6 +93,13 @@ const dataReducer = (state = initialState, { type, payload }) => {
       }
     case dataTypes.EXPORT_ORIGIN:
       return state;
+    case dataTypes.CLICK_NODE:
+      return {
+        ...state,
+        clickedNode: payload,
+      };
+    case dataTypes.SET_DATA_INITIAL_STATE:
+      return cloneDeep(initialState);
     default:
       return state;
   }

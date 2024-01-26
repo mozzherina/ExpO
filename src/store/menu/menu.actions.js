@@ -1,30 +1,24 @@
 import menuTypes from './menu.types';
 import { actionCreator } from '../utils';
 import {
-  selectIsDataModalOpen,
-  selectIsDefinitionsModalOpen,
   selectIsLeftSidebarOpen,
   selectIsRightSidebarOpen,
-  selectIsSettingsModalOpen,
 } from './menu.selectors';
 
-export const toggleDataModal = () => (dispatch, getState) => {
-  const isDataModalOpen = selectIsDataModalOpen(getState());
-  dispatch(actionCreator(menuTypes.SET_OPEN_DATA_MODAL, !isDataModalOpen));
+export const setDataModal = (isOpen) => (dispatch) => {
+  dispatch(actionCreator(menuTypes.SET_OPEN_DATA_MODAL, isOpen));
 };
 
-export const toggleSettingsModal = () => (dispatch, getState) => {
-  const isSettingsModalOpen = selectIsSettingsModalOpen(getState());
-  dispatch(
-    actionCreator(menuTypes.SET_OPEN_SETTINGS_MODAL, !isSettingsModalOpen)
-  );
+export const setSettingsModal = (isOpen) => (dispatch) => {
+  dispatch(actionCreator(menuTypes.SET_OPEN_SETTINGS_MODAL, isOpen));
 };
 
-export const toggleDefinitionsModal = () => (dispatch, getState) => {
-  const isDefinitionsModalOpen = selectIsDefinitionsModalOpen(getState());
-  dispatch(
-    actionCreator(menuTypes.SET_OPEN_DEFINITIONS_MODAL, !isDefinitionsModalOpen)
-  );
+export const setDefinitionsModal = (isOpen) => (dispatch) => {
+  dispatch(actionCreator(menuTypes.SET_OPEN_DEFINITIONS_MODAL, isOpen));
+};
+
+export const setAboutModal = (isOpen) => (dispatch) => {
+  dispatch(actionCreator(menuTypes.SET_OPEN_ABOUT_MODAL, isOpen));
 };
 
 export const toggleLeftSidebar = () => (dispatch, getState) => {
@@ -47,3 +41,6 @@ export const setRelations = (payload) => (dispatch) =>
 
 export const setConstraints = (payload) => (dispatch) =>
   dispatch(actionCreator(menuTypes.SET_CONSTRAINTS_FILTERS, payload));
+
+export const setMenuInitialState = () => (dispatch) =>
+  dispatch(actionCreator(menuTypes.SET_MENU_INITIAL_STATE));

@@ -1,9 +1,11 @@
 import menuTypes from './menu.types';
+import { cloneDeep } from 'lodash';
 
 const initialState = {
   isDataModalOpen: false,
   isSettingsModalOpen: false,
   isDefinitionsModalOpen: false,
+  isAboutModalOpen: false,
   isLeftSidebarOpen: false,
   isRightSidebarOpen: false,
   concepts: {
@@ -20,7 +22,7 @@ const initialState = {
   error: null,
 };
 
-const menuReducer = (state = initialState, { type, payload }) => {
+const menuReducer = (state = cloneDeep(initialState), { type, payload }) => {
   switch (type) {
     case menuTypes.SET_OPEN_DATA_MODAL:
       return {
@@ -36,6 +38,11 @@ const menuReducer = (state = initialState, { type, payload }) => {
       return {
         ...state,
         isDefinitionsModalOpen: payload,
+      };
+    case menuTypes.SET_OPEN_ABOUT_MODAL:
+      return {
+        ...state,
+        isAboutModalOpen: payload,
       };
     case menuTypes.SET_OPEN_LEFT_SIDEBAR:
       return {
@@ -62,6 +69,8 @@ const menuReducer = (state = initialState, { type, payload }) => {
         ...state,
         constraints: payload,
       };
+    case menuTypes.SET_MENU_INITIAL_STATE:
+      return cloneDeep(initialState);
     default:
       return state;
   }

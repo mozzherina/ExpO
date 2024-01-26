@@ -11,35 +11,58 @@ import {
 import { FaUndoAlt, FaRedoAlt } from 'react-icons/fa';
 import { ActionCreators } from 'redux-undo';
 import { useDispatch, useSelector } from 'react-redux';
-import { abstract, exportOrigin } from '../store/data/data.actions';
 import {
+  abstract,
+  exportOrigin,
+  setDataInitialState,
+} from '../store/data/data.actions';
+import {
+  selectAbstractCount,
   selectIsRedoDisabled,
   selectIsUndoDisabled,
   selectOrigin,
 } from '../store/data/data.selectors';
-import Zoom from './Zoom';
+// import Zoom from './Zoom';
 import {
   selectIsLeftSidebarOpen,
   selectIsRightSidebarOpen,
 } from '../store/menu/menu.selectors';
 import {
-  toggleDataModal,
+  setAboutModal,
+  setDataModal,
   toggleLeftSidebar,
   toggleRightSidebar,
-  toggleSettingsModal,
+  setSettingsModal,
+  setMenuInitialState,
 } from '../store/menu/menu.actions';
+import { MAX_ABSTRACT_COUNT } from '../constants';
+import { useCallback } from 'react';
+import { persistor } from '../store';
+import { setSettingsInitialState } from '../store/settings/settings.actions';
 
 export default function Header() {
   const dispatch = useDispatch();
 
   const openLeft = useSelector(selectIsLeftSidebarOpen);
   const openRight = useSelector(selectIsRightSidebarOpen);
+  const isAbstractFull =
+    useSelector(selectAbstractCount) === MAX_ABSTRACT_COUNT;
 
   const toggleOpenLeft = () => dispatch(toggleLeftSidebar());
   const toggleOpenRight = () => dispatch(toggleRightSidebar());
 
-  const toggleDataLoadModal = () => dispatch(toggleDataModal());
-  const toggleSettingsModalOpen = () => dispatch(toggleSettingsModal());
+  const openDataLoadModal = useCallback(
+    () => dispatch(setDataModal(true)),
+    [dispatch]
+  );
+  const openSettingsModalOpen = useCallback(
+    () => dispatch(setSettingsModal(true)),
+    [dispatch]
+  );
+  const openAboutModalOpen = useCallback(
+    () => dispatch(setAboutModal(true)),
+    [dispatch]
+  );
 
   const isUndoDisabled = useSelector(selectIsUndoDisabled);
   const isRedoDisabled = useSelector(selectIsRedoDisabled);
@@ -53,6 +76,22 @@ export default function Header() {
   const onClickRedo = () => {
     if (isRedoDisabled) return;
     dispatch(ActionCreators.redo());
+  };
+
+  const onClickClear = () => {
+    dispatch(setDataInitialState());
+    dispatch(setMenuInitialState());
+    dispatch(setSettingsInitialState());
+    dispatch(ActionCreators.clearHistory());
+    persistor.pause();
+    persistor
+      .flush()
+      .then(() => {
+        return persistor.purge();
+      })
+      .finally(() => {
+        return persistor.persist();
+      });
   };
 
   const onClickExport = () => {
@@ -88,7 +127,7 @@ export default function Header() {
         {openLeft ? <RxCross1 /> : <RxHamburgerMenu />}
       </Button>
       <div className='flex min-w-fit w-6/12'>
-        <Button className='mr-3 border-0' size='sm' onClick={toggleDataLoadModal}>
+        <Button className='mr-3 border-0' size='sm' onClick={openDataLoadModal}>
           <HiOutlineDownload className='mr-1 text-base' />
           Load
         </Button>
@@ -106,7 +145,7 @@ export default function Header() {
           className='mr-3 border-0'
           color='light'
           size='sm'
-          onClick={toggleSettingsModalOpen}
+          onClick={openSettingsModalOpen}
         >
           <HiOutlineAdjustments className='mr-1 text-base' />
           Settings
@@ -115,12 +154,12 @@ export default function Header() {
           className='mr-3 border-0'
           color='light'
           size='sm'
-          onClick={() => {}}
+          onClick={openAboutModalOpen}
         >
           <HiOutlineInformationCircle className='mr-1 text-base' />
           About
         </Button>
-        <Zoom />
+        {/* <Zoom /> */}
         <Button.Group className='mr-3'>
           <Button
             className='border-0'
@@ -144,12 +183,26 @@ export default function Header() {
           </Button>
         </Button.Group>
         <Button
-          className='border-0'
+          title={
+            isAbstractFull
+              ? 'This models is already a full abstraction'
+              : 'Abstract'
+          }
+          className='border-0 mr-3'
           size='sm'
           onClick={onClickAbstract}
-          disabled={!origin}
+          disabled={!origin || isAbstractFull}
         >
           Abstract
+        </Button>
+        <Button
+          title='Clear'
+          className='border-0'
+          size='sm'
+          onClick={onClickClear}
+          // disabled={!origin || isAbstractFull}
+        >
+          Clear
         </Button>
       </div>
       <div className='flex md:order-2'>

@@ -6,6 +6,7 @@ import React from 'react';
 // import { select } from 'd3-selection';
 // import { zoom } from 'd3-zoom';
 import { toast } from 'react-toastify';
+import cn from 'clsx';
 // import defaultConfig from 'react-d3-graph/src/components/graph/graph.config';
 import { Graph } from 'react-d3-graph';
 // import { select } from 'd3-selection';
@@ -16,12 +17,13 @@ import {
   setValue,
   tooltipReducer,
 } from './utils';
-import { isDeepEqual, merge } from 'react-d3-graph/src/utils';
+// import { merge } from 'react-d3-graph/src/utils';
 import { connect } from 'react-redux';
 import { defaultConfig } from './graph.config';
 import ContextMenu from './components/ContextMenu';
 import { selectZoom } from './store/settings/settings.selectors';
 import { setZoom } from './store/settings/settings.actions';
+import { clickNode } from './store/data/data.actions';
 
 // import 'react-toastify/dist/ReactToastify.css';
 // import './styles.css';
@@ -45,7 +47,7 @@ class Sandbox extends React.Component {
   constructor(props) {
     super(props);
 
-    const { config: configOverride, data, fullscreen } = sandboxData;
+    const { config: configOverride /*, data, fullscreen */} = sandboxData;
     const config = Object.assign(defaultConfig, configOverride);
     // TODO: refactor this labelPosition assignment, move to somewhere
     // in generateFormSchema
@@ -89,9 +91,13 @@ class Sandbox extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { graphData } = this.props;
+    const { graphData, /* currentZoom, */ clickedNode } = this.props;
     // if (currentZoom !== prevProps.currentZoom) {
-    //   select('svg').call(zoom.scaleTo, currentZoom);
+    //   const wheelEvt = document.createEvent('MouseEvent');
+    //   wheelEvt.initEvent('wheel', true, true);
+    //   wheelEvt.deltaY = 100 * (prevProps.currentZoom - currentZoom);
+    //   const graphEl = document.querySelector('#graph-graph-wrapper');
+    //   graphEl.dispatchEvent(wheelEvt);
     // }
     if (graphData !== prevProps.graphData) {
       if (graphData?.nodes?.length > 0 && graphData?.links?.length > 0) {
@@ -110,6 +116,18 @@ class Sandbox extends React.Component {
         }));
       }
     }
+    if (clickedNode !== prevProps.clickedNode) {
+      this.setState({
+        clicked: clickedNode,
+        data: {
+          ...this.state.data,
+          focusedNodeId:
+            this.state.data.focusedNodeId !== clickedNode?.id
+              ? clickedNode?.id || null
+              : null,
+        },
+      });
+    }
   }
 
   removeRightClickedNode = () => {
@@ -125,7 +143,10 @@ class Sandbox extends React.Component {
 
   componentDidMount() {
     document.addEventListener('click', this.removeRightClickedNode);
-    document.addEventListener('pointermove', this.removeRightClickedNodeOnPressure);
+    document.addEventListener(
+      'pointermove',
+      this.removeRightClickedNodeOnPressure
+    );
     const { graphData } = this.props;
     if (graphData?.nodes?.length > 0 && graphData?.links?.length > 0) {
       this.setState((state) => ({
@@ -137,8 +158,11 @@ class Sandbox extends React.Component {
 
   componentWillUnmount() {
     document.removeEventListener('click', this.removeRightClickedNode);
-    document.removeEventListener('pointermove', this.removeRightClickedNodeOnPressure);
-  };
+    document.removeEventListener(
+      'pointermove',
+      this.removeRightClickedNodeOnPressure
+    );
+  }
 
   onClickGraph = () => {
     this.setState({ node: null });
@@ -147,13 +171,14 @@ class Sandbox extends React.Component {
 
   onClickNode = (id, node) => {
     // NOTE: below sample implementation for focusAnimation when clicking on node
-    this.setState({
-      clicked: node,
-      data: {
-        ...this.state.data,
-        focusedNodeId: this.state.data.focusedNodeId !== id ? id : null
-      }
-    });
+    this.props.clickNode(node);
+    // this.setState({
+    //   clicked: node,
+    //   data: {
+    //     ...this.state.data,
+    //     focusedNodeId: this.state.data.focusedNodeId !== node.id ? node.id : null
+    //   }
+    // });
   };
 
   onDoubleClickNode = (id, node) => {
@@ -196,19 +221,19 @@ class Sandbox extends React.Component {
     // console.info(
     //   `Do something when mouse is over link between ${source} and ${target}`
     // );
-  }
+  };
 
   onMouseOutLink = (source, target) => {
     // console.info(
     //   `Do something when mouse is out of link between ${source} and ${target}`
     // );
-  }
+  };
 
   onNodePositionChange = (nodeId, x, y) => {
     // console.info(
     //   `Node ${nodeId} is moved to new position. New position is (${x}, ${y}) (x,y)`
     // );
-  }
+  };
 
   /**
    * Sets on/off fullscreen visualization mode.
@@ -226,7 +251,7 @@ class Sandbox extends React.Component {
    */
   onZoomChange = (prevZoom, newZoom) => {
     if (prevZoom === newZoom) return;
-    this.props.setZoom(newZoom);
+    // this.props.setZoom(newZoom);
     // this.setState({ currentZoom: newZoom });
   };
 
@@ -322,18 +347,18 @@ class Sandbox extends React.Component {
     return { config, schemaPropsValues };
   };
 
-  refreshGraph = (data) => {
-    const { config, schemaPropsValues } = this._buildGraphConfig(data);
+  // refreshGraph = (data) => {
+  //   const { config, schemaPropsValues } = this._buildGraphConfig(data);
 
-    this.state.schema.properties = merge(
-      this.state.schema.properties,
-      schemaPropsValues
-    );
+  //   this.state.schema.properties = merge(
+  //     this.state.schema.properties,
+  //     schemaPropsValues
+  //   );
 
-    this.setState({
-      config,
-    });
-  };
+  //   this.setState({
+  //     config,
+  //   });
+  // };
 
   /**
    * Generate graph configuration file ready to use!
@@ -587,8 +612,17 @@ class Sandbox extends React.Component {
       width: window.innerWidth,
     });
 
+    const { openLeft, openRight } = this.props;
+
     return (
-      <div className='mt-16'>
+      <div
+        className={cn('mt-16', 'transition-spacing', {
+          'ml-0': !openLeft,
+          'ml-64': openLeft,
+          'mr-0': !openRight,
+          'mr-96': openRight,
+        })}
+      >
         <Graph key={data.id} ref='graph' {...graphProps} />
         <ContextMenu
           node={this.state.rightClicked}
@@ -602,11 +636,15 @@ class Sandbox extends React.Component {
 
 const mapStateToProps = (state) => ({
   graphData: state.data.present.graph,
-  currentZoom: selectZoom,
+  currentZoom: selectZoom(state),
+  clickedNode: state.data.present.clickedNode,
+  openLeft: state.menu.isLeftSidebarOpen,
+  openRight: state.menu.isRightSidebarOpen,
 });
 
 const mapDispatchToProps = {
   setZoom,
+  clickNode,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Sandbox);
