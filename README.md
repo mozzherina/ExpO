@@ -27,7 +27,7 @@ In case you are specifying a URL, please, make sure to use a link to a _raw_ vie
 
 When the graph appears, you can view or scale it, place it in a better position using drag-and-drop. 
 The layout of the model is kept according to the original diagram from the [Visual Paradigm](https://www.visual-paradigm.com/). 
-Objects (and their hierarchies) are coloured in _red_. Modes are coloured in _blue_. Relators are given in _green diamonds_. Events are specified as _yellow stars_. 
+Objects (and their hierarchies) are coloured in _red_. Modes are coloured in _blue_. Relators are given in _green_. Events are specified as _yellow_. 
 Enumerations (if there are any) are pure _white_. 
 
 ![Model](https://github.com/mozzherina/ExpO/assets/39998083/48f89528-0d43-40eb-bada-a6104310825f)
