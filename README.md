@@ -2,7 +2,7 @@
 
 ## Expo Web Application
 
-A web interface for querying ExpO REST API Server. The application is running [here](https://expo.eng.unibz.it).
+A web interface for querying ExpO server. The application is running [here](https://expo.eng.unibz.it).
 
 If you are interested to know more, feel free to open an issue to provide feedback on the project or reach our team members for more specific cases:
 
